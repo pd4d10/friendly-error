@@ -16,6 +16,8 @@ require('friendly-error')()
 
 That's it.
 
+It use Google, so make sure you have network access to Google. StackOverflow's search API seems not working as expected.
+
 ## Configuration
 
 If you don't like default colors, you could change it easily.
