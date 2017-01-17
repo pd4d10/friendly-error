@@ -1,6 +1,6 @@
 {
   "name": "friendly-error",
-  "version": "0.0.1",
+  "version": "0.0.2",
   "description": "Make errors friendly in Node.js",
   "main": "lib/index.js",
   "scripts": {
@@ -33,7 +33,9 @@
           "targets": {
             "node": 4
           },
-          "exclude": ["transform-regenerator"]
+          "exclude": [
+            "transform-regenerator"
+          ]
         }
       ]
     ]
