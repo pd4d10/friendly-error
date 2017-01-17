@@ -13,20 +13,19 @@ function log(content, beautify) {
 }
 
 module.exports = ({
-  message = chalk.red,
-  position = chalk.bgWhite.black,
+  errorMessage = chalk.red,
+  errorStack = chalk.reset,
+  breakPoint = chalk.bgWhite.black,
   answer = chalk.yellow,
-  description = chalk.cyan,
-  url = chalk.blue.underline,
+  link = chalk.cyan.underline,
 } = {}) => {
   async function handleError(err) {
     try {
-      log(err.stack, (stack) => stack
-        .replace(/^.*?\n/, str => message(str))
-        .replace(/\(.*?:\d+:\d+\)/g, str => position(str))
-      )
-      log('\nLooking up solutions for you, please be patient...\n')
-
+      log(err.stack, (stack) => errorStack(stack
+        .replace(/^.*?\n/, str => errorMessage(str))
+        .replace(/\(.*?:\d+:\d+\)/g, str => breakPoint(str))
+      ))
+      log('')
       spinner.start()
 
       const res = await requestGoogle(err.message)
@@ -35,26 +34,33 @@ module.exports = ({
 
       let isRequested = false
       for ({ title, href } of items) {
-        if (isRequested || !/stackoverflow/.test(href)) {
+        if (isRequested) {
           return
         }
 
         const questionId = href.replace(/.*stackoverflow.com\/questions\/(\d+)\/.*/, '$1')
-        const sta = await requestStackoverflow(questionId)
-        const data = cheerio.load(sta).text()
-        log(data, answer)
+        const answerContent = await requestStackoverflow(questionId)
+
+        // If no answer, try next link
+        if (answerContent === '') {
+          continue
+        }
+
+        const formatedAnswerContent = cheerio.load(answerContent).text()
+        log(formatedAnswerContent, answer)
         isRequested = true
 
-        log('For more answers:', description)
-        log(href, url)
+        log('For more answers:')
+        log(href, link)
 
         const googleUrl = `https://www.google.com/search?q=${encodeURIComponent(err.message)}`
-        log('For more search results:', description)
-        log(googleUrl, url)
+        log('For more search results:')
+        log(googleUrl, link)
       }
     } catch (err) {
-      log('Seems your network is down.')
-      log('If you think this is a bug, please report at https://github.com/pd4d10/friendly-error/issues')
+      spinner.stop()
+      log('There appears to be trouble with your network connection, aborted.')
+      log(err)
     }
   }
 

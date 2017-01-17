@@ -4,7 +4,7 @@ const google = require('google')
 
 function requestGoogle(keyword) {
   return new Promise((resolve, reject) => {
-    google(keyword, (err, res) => {
+    google(`${keyword} site:stackoverflow.com`, (err, res) => {
       if (err) {
         return reject(err)
       }
@@ -15,14 +15,21 @@ function requestGoogle(keyword) {
 
 async function requestStackoverflow(id) {
   const params = qs.stringify({
+    // Votes desc
     order: 'desc',
     sort: 'votes',
     site: 'stackoverflow',
-    filter: '!bGqd9*)(j28_aP', // generated from https://api.stackexchange.com/docs/answers-on-questions
+    // Filter field is generated from https://api.stackexchange.com/docs/answers-on-questions
     // query only `body` and `is_accepted` field
+    filter: '!bGqd9*)(j28_aP',
   })
   const res = await fetch(`https://api.stackexchange.com/2.2/questions/${id}/answers?${params}`)
   const { items } = await res.json()
+
+  // No answer
+  if (items.length === 0) {
+    return ''
+  }
 
   const acceptedAnswers = items.filter(item => item.is_accepted)
 
