@@ -2,17 +2,40 @@
   "name": "friendly-error",
   "version": "0.0.1",
   "description": "Make errors friendly in Node.js",
-  "main": "index.js",
+  "main": "lib/index.js",
   "scripts": {
-    "test": "echo \"Error: no test specified\" && exit 1"
+    "build": "babel src -d lib"
   },
+  "files": [
+    "lib"
+  ],
   "author": "pd4d10 <pd4d10@gmail.com>",
   "license": "MIT",
   "dependencies": {
+    "babel-runtime": "^6.20.0",
     "chalk": "^1.1.3",
     "cheerio": "^0.22.0",
     "google": "^2.1.0",
     "node-fetch": "^1.6.3",
     "simple-spinner": "0.0.5"
+  },
+  "devDependencies": {
+    "babel-cli": "^6.18.0",
+    "babel-core": "^6.21.0",
+    "babel-plugin-transform-runtime": "^6.15.0",
+    "babel-preset-env": "^1.1.8"
+  },
+  "babel": {
+    "presets": [
+      [
+        "env",
+        {
+          "targets": {
+            "node": 4
+          },
+          "exclude": ["transform-regenerator"]
+        }
+      ]
+    ]
   }
 }
