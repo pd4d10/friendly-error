@@ -4,25 +4,31 @@ const spinner = require('simple-spinner')
 
 const { requestGoogle, requestStackoverflow } = require('./request')
 
-module.exports = ({
-  messageColor = chalk.red,
-  positionColor = chalk.bgWhite.black,
-  answerColor = chalk.yellow,
-  descriptionColor = chalk.cyan,
-  urlColor = chalk.blue.underline,
-} = {}) => {
-  function beautify(stack) {
-    return stack
-      .replace(/^.*?\n/, str => messageColor(str))
-      .replace(/\(.*?:\d+:\d+\)/g, str => positionColor(str))
+// Simple wrapper for `console.log`
+function log(content, beautify) {
+  if (typeof beautify === 'function') {
+    return console.log(beautify(content))
   }
+  return console.log(content)
+}
 
-  process.on('uncaughtException', async function handleError(err) {
-    console.log(beautify(err.stack))
-    console.log('\nLooking up solutions for you, please be patient...')
-    spinner.start()
-
+module.exports = ({
+  message = chalk.red,
+  position = chalk.bgWhite.black,
+  answer = chalk.yellow,
+  description = chalk.cyan,
+  url = chalk.blue.underline,
+} = {}) => {
+  async function handleError(err) {
     try {
+      log(err.stack, (stack) => stack
+        .replace(/^.*?\n/, str => message(str))
+        .replace(/\(.*?:\d+:\d+\)/g, str => position(str))
+      )
+      log('\nLooking up solutions for you, please be patient...\n')
+
+      spinner.start()
+
       const res = await requestGoogle(err.message)
       spinner.stop()
       const items = res.slice()
@@ -36,19 +42,21 @@ module.exports = ({
         const questionId = href.replace(/.*stackoverflow.com\/questions\/(\d+)\/.*/, '$1')
         const sta = await requestStackoverflow(questionId)
         const data = cheerio.load(sta).text()
-        console.log(answerColor(data))
+        log(data, answer)
         isRequested = true
 
-        console.log(descriptionColor('For more answers:'))
-        console.log(urlColor(href))
+        log('For more answers:', description)
+        log(href, url)
 
         const googleUrl = `https://www.google.com/search?q=${encodeURIComponent(err.message)}`
-        console.log(descriptionColor('For more search results:'))
-        console.log(urlColor(googleUrl))
+        log('For more search results:', description)
+        log(googleUrl, url)
       }
     } catch (err) {
-      console.log('Seems your network is down.')
-      console.log('If you think this is a bug, please report at https://github.com/pd4d10/friendly-error/issues')
+      log('Seems your network is down.')
+      log('If you think this is a bug, please report at https://github.com/pd4d10/friendly-error/issues')
     }
-  })
+  }
+
+  process.on('uncaughtException', handleError)
 }
