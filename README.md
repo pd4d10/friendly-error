@@ -2,7 +2,7 @@
 
 Show uncaught errors friendly in Node.js.
 
-![Demo](assets/demo.gif)
+![Demo](https://raw.githubusercontent.com/pd4d10/friendly-error/master/assets/demo.gif)
 
 ## Usage
 
