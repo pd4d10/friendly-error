@@ -1,6 +1,6 @@
 const chalk = require('chalk')
-const _ = require('lodash')
 const cheerio = require('cheerio')
+const spinner = require('simple-spinner')
 
 const { requestGoogle, requestStackoverflow } = require('./request')
 
@@ -12,10 +12,12 @@ function beautify(stack) {
 
 async function handleError(err) {
   console.log(beautify(err.stack))
-  console.log('\nLooking up solution for you, please be patient...\n')
+  console.log('\nLooking up solutions for you, please be patient...')
+  spinner.start()
 
   try {
     const res = await requestGoogle(err.message)
+    spinner.stop()
     const items = res.slice()
 
     let isRequested = false

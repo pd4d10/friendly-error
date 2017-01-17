@@ -13,6 +13,7 @@
     "cheerio": "^0.22.0",
     "google": "^2.1.0",
     "node-fetch": "^1.6.3",
-    "request": "^2.79.0"
+    "request": "^2.79.0",
+    "simple-spinner": "0.0.5"
   }
 }
