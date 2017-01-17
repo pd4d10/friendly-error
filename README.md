@@ -2,6 +2,8 @@
 
 Show uncaught errors friendly in Node.js.
 
+![Demo](assets/demo.gif)
+
 ## Usage
 
 ```sh
