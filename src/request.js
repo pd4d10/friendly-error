@@ -1,7 +1,7 @@
 const url = require('url')
 const qs = require('querystring')
 const fetch = require('node-fetch')
-const google = require('google')
+const cheerio = require('cheerio')
 const Socks5Agent = require('socks5-https-client/lib/Agent')
 const HttpAgent = require('http-proxy-agent')
 
@@ -18,28 +18,35 @@ function getAgentFromProxy(proxy) {
   const { protocol, hostname, port } = url.parse(proxy)
 
   switch (protocol) {
-    case 'http://':
-    case 'https://':
-      return new HttpAgent(protocol)
-    case 'socks5://':
+    case 'http:':
+    case 'https:':
+      return new HttpAgent(proxy)
+    case 'socks5:':
       return new Socks5Agent({
-        socksHost: 'localhost',
-        socksPort: 1080,
+        socksHost: hostname,
+        socksPort: port,
       })
     default:
       throw new Error('Proxy not valid, please check it')
   }
 }
 
-function requestGoogle(keyword, proxy) {
-  return new Promise((resolve, reject) => {
-    google(`${keyword} site:stackoverflow.com`, (err, res) => {
-      if (err) {
-        return reject(err)
-      }
-      return resolve(res.links)
-    })
+async function requestGoogle(message, proxy) {
+  const keyword = encodeURIComponent(`${message} site:stackoverflow.com`)
+  const res = await fetch(`https://www.google.com/search?q=${keyword}`, {
+    agent: getAgentFromProxy(proxy),
   })
+  const text = await res.text()
+  const $ = cheerio.load(text)
+
+  return $('h3.r>a').map(function () {
+    const $this = $(this)
+
+    return {
+      title: $this.text(),
+      href: $this.attr('href'),
+    }
+  }).get()
 }
 
 async function requestStackoverflow(id, proxy) {

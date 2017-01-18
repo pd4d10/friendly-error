@@ -31,10 +31,9 @@ module.exports = ({
 
       const res = await requestGoogle(err.message, proxy)
       spinner.stop()
-      const items = res.slice()
 
       let isRequested = false
-      for ({ title, href } of items) {
+      for ({ title, href } of res) {
         if (isRequested) {
           return
         }
