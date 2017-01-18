@@ -59,8 +59,9 @@ module.exports = ({
       }
     } catch (err) {
       spinner.stop()
-      log('There appears to be trouble with your network connection, aborted.')
-      log(err)
+      log('There appears to be some trouble, aborted.')
+      log('If you think this is a bug, please click url as follows to report issue:')
+      log(chalk.cyan(`https://github.com/pd4d10/friendly-error/issues/new?title=${encodeURIComponent(err.message)}&body=${encodeURIComponent(err.stack)}`))
     }
   }
 
