@@ -18,6 +18,7 @@ module.exports = ({
   breakPoint = chalk.bgWhite.black,
   answer = chalk.yellow,
   link = chalk.cyan.underline,
+  proxy,
 } = {}) => {
   async function handleError(err) {
     try {
@@ -28,7 +29,7 @@ module.exports = ({
       log('')
       spinner.start()
 
-      const res = await requestGoogle(err.message)
+      const res = await requestGoogle(err.message, proxy)
       spinner.stop()
       const items = res.slice()
 
@@ -39,7 +40,7 @@ module.exports = ({
         }
 
         const questionId = href.replace(/.*stackoverflow.com\/questions\/(\d+)\/.*/, '$1')
-        const answerContent = await requestStackoverflow(questionId)
+        const answerContent = await requestStackoverflow(questionId, proxy)
 
         // If no answer, try next link
         if (answerContent === '') {

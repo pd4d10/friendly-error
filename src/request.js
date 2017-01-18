@@ -1,8 +1,37 @@
+const url = require('url')
 const qs = require('querystring')
 const fetch = require('node-fetch')
 const google = require('google')
+const Socks5Agent = require('socks5-https-client/lib/Agent')
+const HttpAgent = require('http-proxy-agent')
 
-function requestGoogle(keyword) {
+function getAgentFromProxy(proxy) {
+  // No agent
+  if (typeof proxy === 'undefined') {
+    return null
+  }
+
+  if (typeof proxy !== 'string') {
+    throw new Error('Proxy must be a string, please check it')
+  }
+
+  const { protocol, hostname, port } = url.parse(proxy)
+
+  switch (protocol) {
+    case 'http://':
+    case 'https://':
+      return new HttpAgent(protocol)
+    case 'socks5://':
+      return new Socks5Agent({
+        socksHost: 'localhost',
+        socksPort: 1080,
+      })
+    default:
+      throw new Error('Proxy not valid, please check it')
+  }
+}
+
+function requestGoogle(keyword, proxy) {
   return new Promise((resolve, reject) => {
     google(`${keyword} site:stackoverflow.com`, (err, res) => {
       if (err) {
@@ -13,7 +42,7 @@ function requestGoogle(keyword) {
   })
 }
 
-async function requestStackoverflow(id) {
+async function requestStackoverflow(id, proxy) {
   const params = qs.stringify({
     // Votes desc
     order: 'desc',
@@ -23,7 +52,10 @@ async function requestStackoverflow(id) {
     // query only `body` and `is_accepted` field
     filter: '!bGqd9*)(j28_aP',
   })
-  const res = await fetch(`https://api.stackexchange.com/2.2/questions/${id}/answers?${params}`)
+
+  const res = await fetch(`https://api.stackexchange.com/2.2/questions/${id}/answers?${params}`, {
+    agent: getAgentFromProxy(proxy),
+  })
   const { items } = await res.json()
 
   // No answer
