@@ -1,6 +1,6 @@
 {
   "name": "friendly-error",
-  "version": "1.0.1",
+  "version": "1.1.0",
   "description": "Make errors friendly in Node.js",
   "main": "lib/index.js",
   "scripts": {
