@@ -22,6 +22,25 @@ It use Google, so make sure you have network access to Google. StackOverflow's s
 
 ## Configuration
 
+### Proxy
+
+`friendly-error` support HTTP, HTTPS and SOCKS5 proxy.
+
+```js
+// HTTP proxy
+// Just replace 'http://' with 'https://' to use HTTPS proxy
+require('friendly-error')({
+  proxy: 'http://localhost:8080'
+})
+
+// SOCKS5 proxy
+require('friendly-error')({
+  proxy: 'socks5://localhost:1080'
+})
+```
+
+### Colors
+
 If you don't like default colors, you could change it easily.
 
 Default configuration is as follows:
