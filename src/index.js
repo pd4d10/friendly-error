@@ -51,7 +51,9 @@ module.exports = ({
         isRequested = true
 
         log('For more answers:')
-        log(href, link)
+        // Sometimes google's results url is not the original url, like 'url?xxx'
+        // This `replace` is to extract url from it.
+        log(href.replace(/.*(http:\/\/stackoverflow.com\/questions\/\d+\/[^&]+).*/, '$1'), link)
 
         const googleUrl = `https://www.google.com/search?q=${encodeURIComponent(err.message)}`
         log('For more search results:')
