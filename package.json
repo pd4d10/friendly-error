@@ -4,7 +4,8 @@
   "description": "Make errors friendly in Node.js",
   "main": "lib/index.js",
   "scripts": {
-    "build": "rm -rf lib; babel src -d lib"
+    "build": "rm -rf lib; babel src -d lib",
+    "test": "node test"
   },
   "files": [
     "lib"
