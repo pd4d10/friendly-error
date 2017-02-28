@@ -2,7 +2,7 @@
 
 Show uncaught errors friendly in Node.js.
 
-![Demo](https://raw.githubusercontent.com/pd4d10/friendly-error/master/assets/demo.gif)
+<img src="https://raw.githubusercontent.com/pd4d10/friendly-error/master/assets/demo.gif" alt="Demo" width="650" />
 
 ## Usage
 
